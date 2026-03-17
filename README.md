@@ -13,7 +13,6 @@ Quickly scaffold production-ready portal frontends with **Next.js 16** (SSR) or 
 npx doo-boilerplate
 
 # Non-interactive (CI/CD)
-npx doo-boilerplate my-portal --framework nextjs --pm pnpm --auth jwt --no-install
 ```
 
 ---
@@ -27,7 +26,6 @@ npx doo-boilerplate my-portal --framework nextjs --pm pnpm --auth jwt --no-insta
 | `--pm` | `npm`, `yarn`, `pnpm`, `bun`, `deno` | prompt |
 | `--features` | comma-separated | none |
 | `--auth` | `jwt`, `oauth`, `none` | prompt |
-| `--no-install` | — | false |
 | `--no-git` | — | false |
 
 ### Optional Features (`--features`)
@@ -458,7 +456,6 @@ pnpm install
 # Test CLI locally
 cd packages/cli && pnpm build
 npm link
-create-pila-app test-project --framework nextjs --pm pnpm --no-install
 npm unlink create-pila-app
 ```
 

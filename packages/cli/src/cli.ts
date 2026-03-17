@@ -5,7 +5,6 @@ import fse from 'fs-extra'
 import { Command } from 'commander'
 import { collectOptions } from './prompts.js'
 import { scaffold } from './scaffold.js'
-import { install } from './install.js'
 import { initGit } from './git.js'
 import { printSuccess } from './post-setup.js'
 
@@ -18,7 +17,7 @@ function log(msg: string) {
 
 /**
  * Main CLI entry point.
- * Parses CLI arguments → collects interactive prompts (if TTY) → scaffolds → installs → git init.
+ * Parses CLI arguments → collects interactive prompts (if TTY) → scaffolds → git init.
  */
 export async function run(): Promise<void> {
   const program = new Command()
@@ -27,10 +26,9 @@ export async function run(): Promise<void> {
     .version('0.1.0')
     .argument('[project-name]', 'Name of the project')
     .option('--framework <framework>', 'nextjs or vite')
-    .option('--pm <pm>', 'Package manager: npm, yarn, pnpm, bun, or deno')
+    .option('--pm <pm>', 'Package manager: pnpm, bun, or yarn')
     .option('--features <features>', 'Comma-separated: editor,charts,dnd,sentry')
     .option('--auth <auth>', 'jwt, oauth, or none')
-    .option('--no-install', 'Skip dependency installation')
     .option('--no-git', 'Skip git initialization')
     .parse(process.argv)
 
@@ -47,7 +45,6 @@ export async function run(): Promise<void> {
     pm?: string
     features?: string
     auth?: string
-    install: boolean
     git: boolean
   }>()
 
@@ -59,11 +56,6 @@ export async function run(): Promise<void> {
     features: opts.features?.split(','),
     auth: opts.auth,
   }, isTTY)
-
-  // --no-install flag overrides the prompt answer
-  if (!opts.install) {
-    options.install = false
-  }
 
   const destDir = path.resolve(process.cwd(), options.projectName)
 
@@ -97,10 +89,6 @@ export async function run(): Promise<void> {
     log(pc.green('✓ Project scaffolded'))
   }
 
-  // ── Install ────────────────────────────────────────────────────────────────
-  if (options.install) {
-    await install(destDir, options.packageManager)
-  }
 
   // ── Git init ───────────────────────────────────────────────────────────────
   if (opts.git !== false) {

@@ -12,7 +12,6 @@ export interface ProjectOptions {
   packageManager: PackageManager
   features: Feature[]
   auth: 'jwt' | 'oauth' | 'none'
-  install: boolean
 }
 
 /** Partial pre-fill from CLI flags passed by the user */
@@ -42,7 +41,7 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
     const features = (defaults.features ?? []).filter((f): f is Feature => valid.includes(f as Feature))
     const auth = (defaults.auth === 'jwt' || defaults.auth === 'oauth' || defaults.auth === 'none')
       ? defaults.auth : 'jwt'
-    return { projectName, framework, packageManager, features, auth, install: true }
+    return { projectName, framework, packageManager, features, auth }
   }
   // ── 1. Project name ────────────────────────────────────────────────────────
   let projectName: string
@@ -151,16 +150,5 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
     auth = answer as 'jwt' | 'oauth' | 'none'
   }
 
-  // ── 6. Install dependencies? ───────────────────────────────────────────────
-  const installAnswer = await p.confirm({
-    message: 'Install dependencies now?',
-    initialValue: true,
-  })
-  if (p.isCancel(installAnswer)) {
-    p.cancel('Operation cancelled.')
-    process.exit(0)
-  }
-  const install = installAnswer as boolean
-
-  return { projectName, framework, packageManager, features, auth, install }
+  return { projectName, framework, packageManager, features, auth }
 }

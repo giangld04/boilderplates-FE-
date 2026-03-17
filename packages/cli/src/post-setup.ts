@@ -5,21 +5,18 @@ import type { ProjectOptions } from './prompts.js'
 
 /**
  * Prints the coloured success message and "next steps" guide
- * after scaffolding (and optional install/git) complete.
+ * after scaffolding and git init complete.
  */
 export function printSuccess(options: ProjectOptions, destDir: string, isTTY = true): void {
   const relPath = path.relative(process.cwd(), destDir)
   const cdTarget = relPath || options.projectName
-  const runCmd = `${options.packageManager} ${options.packageManager === 'npm' ? 'run dev' : 'dev'}`
-
-  const installLine = options.install
-    ? ''
-    : `  ${pc.cyan(`${options.packageManager} install`)}\n`
+  const pm = options.packageManager
+  const runCmd = `${pm} ${pm === 'npm' ? 'run dev' : 'dev'}`
 
   const msg =
     `${pc.green('✓')} Project created! Get started:\n\n` +
     `  ${pc.cyan(`cd ${cdTarget}`)}\n` +
-    installLine +
+    `  ${pc.cyan(`${pm} install`)}\n` +
     `  ${pc.cyan(runCmd)}\n\n` +
     `  ${pc.dim('Copy .env.example → .env and fill in your API URLs.')}`
 
