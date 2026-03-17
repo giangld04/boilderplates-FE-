@@ -2,12 +2,14 @@ import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { validateProjectName } from './utils/validate.js'
 
-export type Feature = 'i18n' | 'dark-mode' | 'editor' | 'charts' | 'dnd' | 'sentry'
+export type Feature = 'editor' | 'charts' | 'dnd' | 'sentry'
+
+export type PackageManager = 'npm' | 'yarn' | 'pnpm' | 'bun' | 'deno'
 
 export interface ProjectOptions {
   projectName: string
   framework: 'nextjs' | 'vite'
-  packageManager: 'pnpm' | 'bun'
+  packageManager: PackageManager
   features: Feature[]
   auth: 'jwt' | 'oauth' | 'none'
   install: boolean
@@ -30,12 +32,13 @@ export interface CliDefaults {
 export async function collectOptions(defaults: CliDefaults, isTTY = true): Promise<ProjectOptions> {
   // Non-interactive fallback: use flags or defaults immediately
   if (!isTTY) {
-    const valid: Feature[] = ['i18n', 'dark-mode', 'editor', 'charts', 'dnd', 'sentry']
+    const valid: Feature[] = ['editor', 'charts', 'dnd', 'sentry']
+    const validPMs: PackageManager[] = ['npm', 'yarn', 'pnpm', 'bun', 'deno']
     const projectName = defaults.projectName ?? 'my-portal'
     const framework = (defaults.framework === 'nextjs' || defaults.framework === 'vite')
       ? defaults.framework : 'vite'
-    const packageManager = (defaults.pm === 'pnpm' || defaults.pm === 'bun')
-      ? defaults.pm : 'pnpm'
+    const packageManager = validPMs.includes(defaults.pm as PackageManager)
+      ? (defaults.pm as PackageManager) : 'pnpm'
     const features = (defaults.features ?? []).filter((f): f is Feature => valid.includes(f as Feature))
     const auth = (defaults.auth === 'jwt' || defaults.auth === 'oauth' || defaults.auth === 'none')
       ? defaults.auth : 'jwt'
@@ -84,39 +87,42 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
   }
 
   // ── 3. Package manager ─────────────────────────────────────────────────────
-  let packageManager: 'pnpm' | 'bun'
-  if (defaults.pm === 'pnpm' || defaults.pm === 'bun') {
-    packageManager = defaults.pm
+  const validPMs: PackageManager[] = ['npm', 'yarn', 'pnpm', 'bun', 'deno']
+  let packageManager: PackageManager
+  if (validPMs.includes(defaults.pm as PackageManager)) {
+    packageManager = defaults.pm as PackageManager
   } else {
-    const answer = await p.select<'pnpm' | 'bun'>({
+    const answer = await p.select<PackageManager>({
       message: 'Package manager',
       options: [
-        { value: 'pnpm' as const, label: 'pnpm' },
-        { value: 'bun' as const, label: 'bun' },
+        { value: 'npm' as const,  label: 'npm',  hint: 'Node package manager' },
+        { value: 'yarn' as const, label: 'yarn', hint: 'Fast, reliable' },
+        { value: 'pnpm' as const, label: 'pnpm', hint: 'Efficient disk usage' },
+        { value: 'bun' as const,  label: 'bun',  hint: 'All-in-one runtime' },
+        { value: 'deno' as const, label: 'deno', hint: 'Secure by default' },
       ],
     })
     if (p.isCancel(answer)) {
       p.cancel('Operation cancelled.')
       process.exit(0)
     }
-    packageManager = answer as 'pnpm' | 'bun'
+    packageManager = answer as PackageManager
   }
 
   // ── 4. Features ────────────────────────────────────────────────────────────
+  // Note: i18n and dark-mode are always included by default
   let features: Feature[]
   if (defaults.features && defaults.features.length > 0) {
-    const valid: Feature[] = ['i18n', 'dark-mode', 'editor', 'charts', 'dnd', 'sentry']
+    const valid: Feature[] = ['editor', 'charts', 'dnd', 'sentry']
     features = defaults.features.filter((f): f is Feature => valid.includes(f as Feature))
   } else {
     const answer = await p.multiselect<Feature>({
       message: 'Features ' + pc.dim('(space to toggle, enter to confirm)'),
       options: [
-        { value: 'i18n' as const,      label: 'i18n',            hint: 'next-intl / custom' },
-        { value: 'dark-mode' as const, label: 'Dark mode',        hint: 'next-themes' },
-        { value: 'editor' as const,    label: 'Rich text editor', hint: 'Tiptap' },
-        { value: 'charts' as const,    label: 'Charts',           hint: 'ECharts' },
-        { value: 'dnd' as const,       label: 'Drag & drop',      hint: '@dnd-kit' },
-        { value: 'sentry' as const,    label: 'Error tracking',   hint: 'Sentry' },
+        { value: 'editor' as const, label: 'Rich text editor', hint: 'Tiptap' },
+        { value: 'charts' as const, label: 'Charts',           hint: 'ECharts' },
+        { value: 'dnd' as const,    label: 'Drag & drop',      hint: '@dnd-kit' },
+        { value: 'sentry' as const, label: 'Error tracking',   hint: 'Sentry' },
       ],
       required: false,
     })

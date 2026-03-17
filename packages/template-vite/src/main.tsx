@@ -1,3 +1,4 @@
+import '@/lib/i18n'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
@@ -7,6 +8,7 @@ import { Toaster } from 'sonner'
 
 import { routeTree } from './routeTree.gen'
 import { queryClient } from './lib/query-client'
+import { ThemeProvider } from './context/theme-provider'
 import './styles/globals.css'
 
 const router = createRouter({
@@ -24,10 +26,12 @@ declare module '@tanstack/react-router' {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster richColors position='top-right' />
-      {import.meta.env.DEV && <ReactQueryDevtools />}
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster richColors position='top-right' />
+        {import.meta.env.DEV && <ReactQueryDevtools />}
+      </QueryClientProvider>
+    </ThemeProvider>
   </StrictMode>
 )

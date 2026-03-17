@@ -10,7 +10,7 @@ import type { ProjectOptions } from './prompts.js'
 export function printSuccess(options: ProjectOptions, destDir: string, isTTY = true): void {
   const relPath = path.relative(process.cwd(), destDir)
   const cdTarget = relPath || options.projectName
-  const runCmd = options.packageManager === 'bun' ? 'bun dev' : 'pnpm dev'
+  const runCmd = `${options.packageManager} ${options.packageManager === 'npm' ? 'run dev' : 'dev'}`
 
   const installLine = options.install
     ? ''
