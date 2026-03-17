@@ -1,8 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { LogOut, Menu, User } from 'lucide-react'
 import Link from 'next/link'
-import { useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 
 import { useSignOut } from '@/features/auth/hooks/use-auth'
@@ -26,12 +26,19 @@ const LANGUAGES = [
   { code: 'vi', label: 'VI' },
 ]
 
+function getLangFromCookie(): string {
+  if (typeof document === 'undefined') return 'en'
+  const match = document.cookie.match(/(?:^|;\s*)NEXT_LOCALE=([^;]+)/)
+  return match?.[1] ?? 'en'
+}
+
 function LangSwitcher() {
-  const locale = useLocale()
+  const [locale, setLocale] = useState(getLangFromCookie)
   const router = useRouter()
 
   function switchLocale(code: string) {
     document.cookie = `NEXT_LOCALE=${code}; path=/; max-age=${365 * 24 * 60 * 60}`
+    setLocale(code)
     router.refresh()
   }
 
