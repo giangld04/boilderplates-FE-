@@ -1,0 +1,31 @@
+{
+  "name": "Doo-boilerplate",
+  "version": "0.1.0",
+  "description": "CLI to scaffold Pila portal frontend projects",
+  "type": "module",
+  "bin": { "create-pila-app": "./dist/index.js" },
+  "main": "./dist/index.js",
+  "files": ["dist", "templates"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "copy-templates": "node scripts/copy-templates.mjs",
+    "prepublishOnly": "node scripts/copy-templates.mjs && tsup"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "commander": "^13.0.0",
+    "execa": "^9.5.2",
+    "fs-extra": "^11.2.0",
+    "picocolors": "^1.1.1",
+    "validate-npm-package-name": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22",
+    "@types/validate-npm-package-name": "^4.0.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

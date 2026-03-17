@@ -76,7 +76,7 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
       message: 'Framework',
       options: [
         { value: 'nextjs' as const, label: 'Next.js 16', hint: 'SSR · App Router · i18n-ready' },
-        { value: 'vite' as const, label: 'Vite 7', hint: 'SPA · faster builds · TanStack Router' },
+        { value: 'vite' as const, label: 'Vite 8', hint: 'SPA · faster builds · TanStack Router' },
       ],
     })
     if (p.isCancel(answer)) {
