@@ -2,9 +2,12 @@
 
 import { LogOut, Menu, User } from 'lucide-react'
 import Link from 'next/link'
+import { useLocale } from 'next-intl'
+import { useRouter } from 'next/navigation'
 
 import { useSignOut } from '@/features/auth/hooks/use-auth'
 import { useAuthStore } from '@/stores/auth-store'
+import { ThemeToggle } from '@/components/common/theme-toggle'
 
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Button } from '../ui/button'
@@ -17,6 +20,42 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { useSidebarStore } from './sidebar'
+
+const LANGUAGES = [
+  { code: 'en', label: 'EN' },
+  { code: 'vi', label: 'VI' },
+]
+
+function LangSwitcher() {
+  const locale = useLocale()
+  const router = useRouter()
+
+  function switchLocale(code: string) {
+    document.cookie = `NEXT_LOCALE=${code}; path=/; max-age=${365 * 24 * 60 * 60}`
+    router.refresh()
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="w-10 px-0 font-medium">
+          {locale.toUpperCase().slice(0, 2)}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {LANGUAGES.map(({ code, label }) => (
+          <DropdownMenuItem
+            key={code}
+            onClick={() => switchLocale(code)}
+            className={locale === code ? 'font-semibold' : ''}
+          >
+            {label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 interface HeaderProps {
   title?: string
@@ -52,6 +91,11 @@ export function Header({ title = 'Dashboard' }: HeaderProps) {
         <h2 className="text-lg font-semibold">{title}</h2>
       </div>
 
+      {/* Controls */}
+      <div className="flex items-center gap-1">
+        <LangSwitcher />
+        <ThemeToggle />
+
       {/* User dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -86,6 +130,7 @@ export function Header({ title = 'Dashboard' }: HeaderProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </header>
   )
 }
