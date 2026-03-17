@@ -25,7 +25,7 @@ export function SignInForm() {
       <div className='text-center'>
         <h1 className='text-2xl font-bold tracking-tight'>Sign in</h1>
         <p className='mt-1 text-sm text-muted-foreground'>
-          Enter your credentials to access your account
+          Enter your credentials to access your account · or try <strong>demo / demo</strong>
         </p>
       </div>
 

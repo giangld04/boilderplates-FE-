@@ -4,7 +4,7 @@ import { validateProjectName } from './utils/validate.js'
 
 export type Feature = 'editor' | 'charts' | 'dnd' | 'sentry'
 
-export type PackageManager = 'npm' | 'yarn' | 'pnpm' | 'bun' | 'deno'
+export type PackageManager = 'pnpm' | 'bun' | 'yarn'
 
 export interface ProjectOptions {
   projectName: string
@@ -33,7 +33,7 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
   // Non-interactive fallback: use flags or defaults immediately
   if (!isTTY) {
     const valid: Feature[] = ['editor', 'charts', 'dnd', 'sentry']
-    const validPMs: PackageManager[] = ['npm', 'yarn', 'pnpm', 'bun', 'deno']
+    const validPMs: PackageManager[] = ['pnpm', 'bun', 'yarn']
     const projectName = defaults.projectName ?? 'my-portal'
     const framework = (defaults.framework === 'nextjs' || defaults.framework === 'vite')
       ? defaults.framework : 'vite'
@@ -75,8 +75,8 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
     const answer = await p.select<'nextjs' | 'vite'>({
       message: 'Framework',
       options: [
+        { value: 'vite' as const,   label: 'Vite 8',     hint: 'SPA · faster builds · TanStack Router' },
         { value: 'nextjs' as const, label: 'Next.js 16', hint: 'SSR · App Router · i18n-ready' },
-        { value: 'vite' as const, label: 'Vite 8', hint: 'SPA · faster builds · TanStack Router' },
       ],
     })
     if (p.isCancel(answer)) {
@@ -87,7 +87,7 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
   }
 
   // ── 3. Package manager ─────────────────────────────────────────────────────
-  const validPMs: PackageManager[] = ['npm', 'yarn', 'pnpm', 'bun', 'deno']
+  const validPMs: PackageManager[] = ['pnpm', 'bun', 'yarn']
   let packageManager: PackageManager
   if (validPMs.includes(defaults.pm as PackageManager)) {
     packageManager = defaults.pm as PackageManager
@@ -95,11 +95,9 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
     const answer = await p.select<PackageManager>({
       message: 'Package manager',
       options: [
-        { value: 'npm' as const,  label: 'npm',  hint: 'Node package manager' },
-        { value: 'yarn' as const, label: 'yarn', hint: 'Fast, reliable' },
-        { value: 'pnpm' as const, label: 'pnpm', hint: 'Efficient disk usage' },
-        { value: 'bun' as const,  label: 'bun',  hint: 'All-in-one runtime' },
-        { value: 'deno' as const, label: 'deno', hint: 'Secure by default' },
+        { value: 'pnpm' as const, label: 'pnpm', hint: 'recommended · efficient disk usage' },
+        { value: 'bun' as const,  label: 'bun',  hint: 'fastest · all-in-one runtime' },
+        { value: 'yarn' as const, label: 'yarn', hint: 'reliable · stable' },
       ],
     })
     if (p.isCancel(answer)) {

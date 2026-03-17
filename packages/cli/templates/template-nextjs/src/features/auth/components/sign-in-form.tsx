@@ -40,7 +40,7 @@ export function SignInForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
-        <CardDescription>Enter your credentials to access your account</CardDescription>
+        <CardDescription>Enter your credentials to access your account · or try <strong>demo / demo</strong></CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
