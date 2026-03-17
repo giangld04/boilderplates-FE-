@@ -8,6 +8,8 @@ import { useAuthStore } from '@/stores/auth-store'
 import { authApi } from '../services/auth-api'
 import type { SignInValues } from '../schemas/auth-schema'
 
+const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 days
+
 export function useSignIn() {
   const { login } = useAuthStore()
   const router = useRouter()
@@ -16,6 +18,8 @@ export function useSignIn() {
     mutationFn: (data: SignInValues) => authApi.login(data),
     onSuccess: (data) => {
       login(data.user, data.accessToken, data.refreshToken)
+      // Sync cookie for Next.js proxy auth check
+      document.cookie = `auth-token=${data.accessToken}; path=/; max-age=${COOKIE_MAX_AGE}`
       router.push('/dashboard')
     },
   })
@@ -30,6 +34,7 @@ export function useSignOut() {
     mutationFn: () => authApi.logout(),
     onSettled: () => {
       logout()
+      document.cookie = 'auth-token=; path=/; max-age=0'
       qc.clear()
       router.push('/sign-in')
     },
