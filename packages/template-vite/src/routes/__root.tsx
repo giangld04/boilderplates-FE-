@@ -1,5 +1,5 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { RouterDevtools } from '@tanstack/router-devtools'
+import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -11,7 +11,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>
       <Outlet />
-      {import.meta.env.DEV && <RouterDevtools />}
+      {import.meta.env.DEV && <TanStackRouterDevtools />}
     </>
   ),
 })
