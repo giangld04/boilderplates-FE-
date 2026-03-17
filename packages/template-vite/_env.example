@@ -1,0 +1,8 @@
+# API Configuration
+VITE_API_URL=http://localhost:8000
+VITE_API_AUTH_URL=http://localhost:8001
+
+# App
+VITE_APP_URL=http://localhost:3000
+VITE_APP_NAME={{PROJECT_NAME}}
+VITE_MODE=development

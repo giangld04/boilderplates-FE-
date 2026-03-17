@@ -1,0 +1,14 @@
+{
+  "auth": {
+    "signIn": "Đăng nhập",
+    "signUp": "Đăng ký",
+    "signOut": "Đăng xuất",
+    "email": "Email",
+    "password": "Mật khẩu"
+  },
+  "nav": {
+    "dashboard": "Bảng điều khiển",
+    "settings": "Cài đặt",
+    "profile": "Hồ sơ"
+  }
+}
