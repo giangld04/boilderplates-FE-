@@ -24,7 +24,7 @@ function makeDemoToken(): string {
 }
 
 const DEMO_RESPONSE: LoginResponse = {
-  user: { id: 'demo', email: 'demo', name: 'Demo User', roles: ['admin'], permissions: ['*'] },
+  user: { id: 'demo', email: 'demo@gmail.com', name: 'Demo User', roles: ['admin'], permissions: ['*'] },
   accessToken: makeDemoToken(),
   refreshToken: 'demo-refresh',
 }
@@ -32,7 +32,7 @@ const DEMO_RESPONSE: LoginResponse = {
 export const authApi = {
   login: (data: SignInValues): Promise<LoginResponse> => {
     // Demo account — works without a real backend
-    if (data.email === 'demo' && data.password === 'demo') {
+    if (data.email === 'demo@gmail.com' && data.password === 'demo') {
       return Promise.resolve(DEMO_RESPONSE)
     }
     return apiClient.post<LoginResponse>('/auth/login', data).then((r) => r.data)

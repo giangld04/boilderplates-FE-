@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 export const signInSchema = z.object({
-  email: z.union([z.string().email('Invalid email address'), z.literal('demo')]),
-  password: z.union([z.string().min(6, 'Password must be at least 6 characters'), z.literal('demo')]),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
 })
 
 export const signUpSchema = z

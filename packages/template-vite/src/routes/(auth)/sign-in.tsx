@@ -1,8 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 import { SignInForm } from '@/features/auth/components/sign-in-form'
+import { useAuthStore } from '@/stores/auth-store'
 
 export const Route = createFileRoute('/(auth)/sign-in')({
+  beforeLoad: () => {
+    const { isAuthenticated, isTokenExpired } = useAuthStore.getState()
+    if (isAuthenticated && !isTokenExpired()) {
+      throw redirect({ to: '/dashboard' })
+    }
+  },
   component: SignInPage,
 })
 

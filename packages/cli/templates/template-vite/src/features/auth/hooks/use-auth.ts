@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 
 import { useAuthStore } from '@/stores/auth-store'
 
@@ -9,11 +9,14 @@ import { authApi } from '../services/auth-api'
 export function useSignIn() {
   const { login } = useAuthStore()
   const navigate = useNavigate()
+  const router = useRouter()
 
   return useMutation({
     mutationFn: (data: SignInValues) => authApi.login(data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       login(data.user, data.accessToken, data.refreshToken)
+      // Invalidate router so _authenticated.beforeLoad re-evaluates with new auth state
+      await router.invalidate()
       navigate({ to: '/dashboard' })
     },
   })
@@ -22,13 +25,15 @@ export function useSignIn() {
 export function useSignOut() {
   const { logout } = useAuthStore()
   const navigate = useNavigate()
+  const router = useRouter()
   const qc = useQueryClient()
 
   return useMutation({
     mutationFn: () => authApi.logout(),
-    onSettled: () => {
+    onSettled: async () => {
       logout()
       qc.clear()
+      await router.invalidate()
       navigate({ to: '/sign-in' })
     },
   })
