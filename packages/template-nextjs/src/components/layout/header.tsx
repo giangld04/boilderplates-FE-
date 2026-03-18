@@ -8,6 +8,13 @@ import { useRouter } from 'next/navigation'
 import { useSignOut } from '@/features/auth/hooks/use-auth'
 import { useAuthStore } from '@/stores/auth-store'
 import { ThemeToggle } from '@/components/common/theme-toggle'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Button } from '../ui/button'
@@ -22,8 +29,8 @@ import {
 import { useSidebarStore } from './sidebar'
 
 const LANGUAGES = [
-  { code: 'en', label: 'EN' },
-  { code: 'vi', label: 'VI' },
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
 ]
 
 function getLangFromCookie(): string {
@@ -35,6 +42,7 @@ function getLangFromCookie(): string {
 function LangSwitcher() {
   const [locale, setLocale] = useState(getLangFromCookie)
   const router = useRouter()
+  const current = LANGUAGES.find((l) => l.code === locale) ?? LANGUAGES[0]
 
   function switchLocale(code: string) {
     document.cookie = `NEXT_LOCALE=${code}; path=/; max-age=${365 * 24 * 60 * 60}`
@@ -43,24 +51,23 @@ function LangSwitcher() {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-10 px-0 font-medium">
-          {locale.toUpperCase().slice(0, 2)}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {LANGUAGES.map(({ code, label }) => (
-          <DropdownMenuItem
-            key={code}
-            onClick={() => switchLocale(code)}
-            className={locale === code ? 'font-semibold' : ''}
-          >
-            {label}
-          </DropdownMenuItem>
+    <Select value={current.code} onValueChange={switchLocale}>
+      <SelectTrigger className='h-8 w-auto gap-1 border-0 bg-transparent px-2 shadow-none focus:ring-0'>
+        <SelectValue>
+          <span>{current.flag}</span>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent align='end'>
+        {LANGUAGES.map(({ code, name, flag }) => (
+          <SelectItem key={code} value={code}>
+            <div className='flex items-center gap-2'>
+              <span>{flag}</span>
+              <span>{name}</span>
+            </div>
+          </SelectItem>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </SelectContent>
+    </Select>
   )
 }
 

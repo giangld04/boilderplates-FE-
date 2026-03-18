@@ -2,7 +2,7 @@
 
 > CLI scaffolding tool for Pila portal frontend projects
 
-Quickly scaffold production-ready portal frontends with **Next.js 16** (SSR) or **Vite 8** (SPA). Ships with authentication, i18n, dark mode, state management, and DevOps tooling by default.
+Quickly scaffold production-ready portal frontends with **Next.js 16** (SSR) or **Vite 8** (SPA). Ships with authentication, i18n, dark mode, a cohesive design system, state management, and DevOps tooling by default.
 
 ---
 
@@ -13,6 +13,7 @@ Quickly scaffold production-ready portal frontends with **Next.js 16** (SSR) or 
 npx doo-boilerplate
 
 # Non-interactive (CI/CD)
+npx doo-boilerplate my-app --framework vite --pm pnpm --theme violet --auth jwt --no-git
 ```
 
 ---
@@ -23,10 +24,22 @@ npx doo-boilerplate
 |------|--------|---------|
 | `[project-name]` | string | prompt |
 | `--framework` | `nextjs`, `vite` | prompt |
-| `--pm` | `npm`, `yarn`, `pnpm`, `bun`, `deno` | prompt |
+| `--pm` | `pnpm`, `bun`, `yarn` | prompt |
+| `--theme` | `violet`, `blue`, `emerald`, `rose` | prompt |
 | `--features` | comma-separated | none |
 | `--auth` | `jwt`, `oauth`, `none` | prompt |
 | `--no-git` | — | false |
+
+### Color Themes (`--theme`)
+
+All themes use **hue-tinted neutrals** — borders, muted text, sidebar, and secondary surfaces share the primary hue at low saturation for a fully cohesive palette.
+
+| Theme | Primary | Description |
+|-------|---------|-------------|
+| `violet` | `hsl(262 83% 58%)` | Modern & distinctive — default |
+| `blue` | `hsl(217 91% 60%)` | Trustworthy & familiar |
+| `emerald` | `hsl(158 64% 42%)` | Fresh & natural |
+| `rose` | `hsl(346 77% 49%)` | Bold & energetic |
 
 ### Optional Features (`--features`)
 
@@ -53,8 +66,10 @@ npx doo-boilerplate
 
 Both templates include identically:
 - Shadcn/ui + Radix UI + Tailwind CSS 4
+- **Design system** — 4 color themes, violet-tinted tokens, polished button/badge/card variants
+- **Header** — language switcher (EN/VI flag emojis) + theme toggle with circular reveal animation
 - i18n EN/VI (default)
-- Dark mode via `next-themes`
+- Dark mode via `next-themes` (circular reveal via `document.startViewTransition`)
 - Zustand 5 + TanStack Query 5
 - React Hook Form + Zod
 - Axios with JWT interceptors
@@ -120,7 +135,7 @@ my-portal/
 │   │   ├── query-client.ts         # TanStack Query client config
 │   │   └── utils.ts                # cn() helper
 │   │
-│   ├── middleware.ts                # next-intl routing middleware
+│   ├── proxy.ts                    # Auth proxy: routes by auth-token cookie
 │   │
 │   ├── providers/
 │   │   ├── app-providers.tsx       # Root provider composition
@@ -437,7 +452,8 @@ The Dockerfile is multi-stage optimized. Next.js uses `output: 'standalone'`. Vi
 │   │   │   ├── cli.ts          # Commander entry + TTY detection
 │   │   │   ├── prompts.ts      # @clack/prompts interactive flow
 │   │   │   ├── scaffold.ts     # Copy & customize templates
-│   │   │   ├── install.ts      # Run pnpm/npm/yarn/bun/deno install
+│   │   │   ├── themes.ts       # 4 color theme CSS definitions
+│   │   │   ├── install.ts      # Run pnpm/yarn/bun install
 │   │   │   ├── git.ts          # git init + initial commit
 │   │   │   └── post-setup.ts   # Print success message
 │   │   ├── templates/          # Real dirs (symlinks in dev, copied on publish)

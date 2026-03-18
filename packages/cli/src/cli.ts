@@ -29,6 +29,7 @@ export async function run(): Promise<void> {
     .option('--pm <pm>', 'Package manager: pnpm, bun, or yarn')
     .option('--features <features>', 'Comma-separated: editor,charts,dnd,sentry')
     .option('--auth <auth>', 'jwt, oauth, or none')
+    .option('--theme <theme>', 'Color theme: violet, blue, emerald, or rose')
     .option('--no-git', 'Skip git initialization')
     .parse(process.argv)
 
@@ -45,6 +46,7 @@ export async function run(): Promise<void> {
     pm?: string
     features?: string
     auth?: string
+    theme?: string
     git: boolean
   }>()
 
@@ -55,6 +57,7 @@ export async function run(): Promise<void> {
     pm: opts.pm,
     features: opts.features?.split(','),
     auth: opts.auth,
+    theme: opts.theme,
   }, isTTY)
 
   const destDir = path.resolve(process.cwd(), options.projectName)

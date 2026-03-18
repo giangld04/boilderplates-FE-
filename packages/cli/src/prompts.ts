@@ -1,6 +1,7 @@
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { validateProjectName } from './utils/validate.js'
+import type { Theme } from './themes.js'
 
 export type Feature = 'editor' | 'charts' | 'dnd' | 'sentry'
 
@@ -12,6 +13,7 @@ export interface ProjectOptions {
   packageManager: PackageManager
   features: Feature[]
   auth: 'jwt' | 'oauth' | 'none'
+  theme: Theme
 }
 
 /** Partial pre-fill from CLI flags passed by the user */
@@ -21,6 +23,7 @@ export interface CliDefaults {
   pm?: string
   features?: string[]
   auth?: string
+  theme?: string
 }
 
 /**
@@ -41,7 +44,10 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
     const features = (defaults.features ?? []).filter((f): f is Feature => valid.includes(f as Feature))
     const auth = (defaults.auth === 'jwt' || defaults.auth === 'oauth' || defaults.auth === 'none')
       ? defaults.auth : 'jwt'
-    return { projectName, framework, packageManager, features, auth }
+    const validThemes: Theme[] = ['violet', 'blue', 'emerald', 'rose']
+    const theme: Theme = validThemes.includes(defaults.theme as Theme)
+      ? (defaults.theme as Theme) : 'violet'
+    return { projectName, framework, packageManager, features, auth, theme }
   }
   // ── 1. Project name ────────────────────────────────────────────────────────
   let projectName: string
@@ -130,7 +136,29 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
     features = answer as Feature[]
   }
 
-  // ── 5. Auth ────────────────────────────────────────────────────────────────
+  // ── 5. Theme ───────────────────────────────────────────────────────────────
+  const validThemes: Theme[] = ['violet', 'blue', 'emerald', 'rose']
+  let theme: Theme
+  if (validThemes.includes(defaults.theme as Theme)) {
+    theme = defaults.theme as Theme
+  } else {
+    const answer = await p.select<Theme>({
+      message: 'Color theme',
+      options: [
+        { value: 'violet'  as const, label: 'Violet',  hint: 'hsl(262 83% 58%) · modern & distinctive' },
+        { value: 'blue'    as const, label: 'Blue',    hint: 'hsl(217 91% 60%) · trustworthy & familiar' },
+        { value: 'emerald' as const, label: 'Emerald', hint: 'hsl(158 64% 42%) · fresh & natural' },
+        { value: 'rose'    as const, label: 'Rose',    hint: 'hsl(346 77% 49%) · bold & energetic' },
+      ],
+    })
+    if (p.isCancel(answer)) {
+      p.cancel('Operation cancelled.')
+      process.exit(0)
+    }
+    theme = answer as Theme
+  }
+
+  // ── 6. Auth ────────────────────────────────────────────────────────────────
   let auth: 'jwt' | 'oauth' | 'none'
   if (defaults.auth === 'jwt' || defaults.auth === 'oauth' || defaults.auth === 'none') {
     auth = defaults.auth
@@ -150,5 +178,5 @@ export async function collectOptions(defaults: CliDefaults, isTTY = true): Promi
     auth = answer as 'jwt' | 'oauth' | 'none'
   }
 
-  return { projectName, framework, packageManager, features, auth }
+  return { projectName, framework, packageManager, features, auth, theme }
 }

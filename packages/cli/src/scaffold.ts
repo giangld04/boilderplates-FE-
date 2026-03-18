@@ -2,6 +2,7 @@ import fse from 'fs-extra'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import type { ProjectOptions } from './prompts.js'
+import { getThemeCss } from './themes.js'
 import { mergeDepsIntoPackageJson, type DepsJson } from './utils/package-json.js'
 import { replaceInFiles } from './utils/template.js'
 
@@ -46,7 +47,11 @@ export async function scaffold(options: ProjectOptions, destDir: string): Promis
     await applyFeature(feature, templateDir, destDir)
   }
 
-  // 4. Token replacement across all text files
+  // 4. Write theme-specific globals.css
+  const globalsCssPath = path.join(destDir, 'src', 'styles', 'globals.css')
+  await fse.writeFile(globalsCssPath, getThemeCss(options.theme, options.framework), 'utf-8')
+
+  // 5. Token replacement across all text files
   await replaceInFiles(destDir, {
     '{{PROJECT_NAME}}': options.projectName,
     '{{YEAR}}': new Date().getFullYear().toString(),
