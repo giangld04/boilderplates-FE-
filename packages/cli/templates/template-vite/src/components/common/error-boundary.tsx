@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { Link } from '@tanstack/react-router'
 
 import { Button } from '@/components/ui/button'
 
@@ -39,9 +40,14 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className='max-w-md text-sm text-muted-foreground'>
             {this.state.error?.message ?? 'An unexpected error occurred.'}
           </p>
-          <Button variant='outline' onClick={this.handleReset}>
-            Try again
-          </Button>
+          <div className='flex gap-3'>
+            <Button variant='outline' onClick={this.handleReset}>
+              Try again
+            </Button>
+            <Button asChild>
+              <Link to='/500'>View error details</Link>
+            </Button>
+          </div>
         </div>
       )
     }

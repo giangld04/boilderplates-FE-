@@ -1,3 +1,4 @@
+import { initSentry } from '@/lib/sentry'
 import '@/lib/i18n'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -10,6 +11,8 @@ import { routeTree } from './routeTree.gen'
 import { queryClient } from './lib/query-client'
 import { ThemeProvider } from './context/theme-provider'
 import './styles/globals.css'
+
+initSentry()
 
 const router = createRouter({
   routeTree,

@@ -25,11 +25,6 @@ export async function run(): Promise<void> {
     .description('Scaffold a Pila portal frontend project')
     .version('0.1.0')
     .argument('[project-name]', 'Name of the project')
-    .option('--framework <framework>', 'nextjs or vite')
-    .option('--pm <pm>', 'Package manager: pnpm, bun, or yarn')
-    .option('--features <features>', 'Comma-separated: editor,charts,dnd,sentry')
-    .option('--auth <auth>', 'jwt, oauth, or none')
-    .option('--theme <theme>', 'Color theme: violet, blue, emerald, or rose')
     .option('--no-git', 'Skip git initialization')
     .parse(process.argv)
 
@@ -41,24 +36,10 @@ export async function run(): Promise<void> {
   }
 
   const args = program.args
-  const opts = program.opts<{
-    framework?: string
-    pm?: string
-    features?: string
-    auth?: string
-    theme?: string
-    git: boolean
-  }>()
+  const opts = program.opts<{ git: boolean }>()
 
   // Collect options interactively (TTY) or from flags (non-interactive)
-  const options = await collectOptions({
-    projectName: args[0],
-    framework: opts.framework,
-    pm: opts.pm,
-    features: opts.features?.split(','),
-    auth: opts.auth,
-    theme: opts.theme,
-  }, isTTY)
+  const options = await collectOptions({ projectName: args[0] }, isTTY)
 
   const destDir = path.resolve(process.cwd(), options.projectName)
 

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { AUTH_STORAGE_KEY } from '@/stores/auth-store'
 
 // Axios instance configured with base URL from Vite env
 const apiClient = axios.create({
@@ -10,7 +11,7 @@ const apiClient = axios.create({
 // Attach Bearer token from auth storage on each request
 apiClient.interceptors.request.use((config) => {
   try {
-    const stored = localStorage.getItem('auth-storage')
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY)
     if (stored) {
       const { state } = JSON.parse(stored)
       if (state?.accessToken) {
@@ -28,7 +29,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('auth-storage')
+      localStorage.removeItem(AUTH_STORAGE_KEY)
       window.location.href = '/sign-in'
     }
     return Promise.reject(error)

@@ -11,7 +11,7 @@ export function printSuccess(options: ProjectOptions, destDir: string, isTTY = t
   const relPath = path.relative(process.cwd(), destDir)
   const cdTarget = relPath || options.projectName
   const pm = options.packageManager
-  const runCmd = `${pm} ${pm === 'npm' ? 'run dev' : 'dev'}`
+  const runCmd = `${pm} dev`
 
   const msg =
     `${pc.green('✓')} Project created! Get started:\n\n` +

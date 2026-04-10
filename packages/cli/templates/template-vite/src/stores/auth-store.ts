@@ -1,3 +1,6 @@
+/** Shared storage key used by auth store and api-client interceptor */
+export const AUTH_STORAGE_KEY = 'auth-storage'
+
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { jwtDecode } from 'jwt-decode'
@@ -51,6 +54,6 @@ export const useAuthStore = create<AuthState>()(
       hasRole: (role) => get().user?.roles.includes(role) ?? false,
       hasPermission: (permission) => get().user?.permissions.includes(permission) ?? false,
     }),
-    { name: 'auth-storage' }
+    { name: AUTH_STORAGE_KEY }
   )
 )

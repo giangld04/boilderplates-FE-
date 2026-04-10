@@ -23,10 +23,24 @@ export function SignInForm() {
   return (
     <div className='space-y-6'>
       <div className='text-center'>
-        <h1 className='text-2xl font-bold tracking-tight'>Sign in</h1>
-        <p className='mt-1 text-sm text-muted-foreground'>
-          Enter your credentials to access your account · or try <strong>demo@gmail.com / demo</strong>
-        </p>
+        <h1 className='text-2xl font-bold tracking-tight'>Welcome back</h1>
+        <p className='mt-1 text-sm text-muted-foreground'>Sign in to your account to continue</p>
+      </div>
+
+      {/* Demo shortcut */}
+      <div className='rounded-md border border-dashed p-3 text-center'>
+        <p className='text-xs text-muted-foreground mb-2'>No account? Try the demo</p>
+        <Button
+          type='button'
+          variant='outline'
+          size='sm'
+          onClick={() => {
+            form.setValue('email', 'demo@gmail.com')
+            form.setValue('password', 'demo')
+          }}
+        >
+          Use demo account
+        </Button>
       </div>
 
       <Form {...form}>

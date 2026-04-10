@@ -12,7 +12,7 @@ interface PageLayoutProps {
 /** Standard page wrapper with title, optional description + actions slot */
 export function PageLayout({ title, description, actions, children }: PageLayoutProps) {
   return (
-    <div className='flex h-full flex-col'>
+    <div className='flex flex-col'>
       <div className='flex items-start justify-between px-6 pt-6'>
         <div>
           <h1 className='text-2xl font-bold tracking-tight'>{title}</h1>
@@ -25,7 +25,7 @@ export function PageLayout({ title, description, actions, children }: PageLayout
 
       <Separator className='my-4' />
 
-      <div className='flex-1 overflow-auto px-6 pb-6'>{children}</div>
+      <div className='px-6 pb-6'>{children}</div>
     </div>
   )
 }

@@ -4,7 +4,6 @@ import type { PackageManager } from './prompts.js'
 
 /** Returns the install command args for the given package manager */
 function getInstallArgs(pm: PackageManager): { cmd: string; args: string[] } {
-  if (pm === 'deno') return { cmd: 'deno', args: ['install', '--node-modules-dir'] }
   return { cmd: pm, args: ['install'] }
 }
 

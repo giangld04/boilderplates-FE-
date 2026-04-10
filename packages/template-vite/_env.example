@@ -6,3 +6,11 @@ VITE_API_AUTH_URL=http://localhost:8001
 VITE_APP_URL=http://localhost:3000
 VITE_APP_NAME={{PROJECT_NAME}}
 VITE_MODE=development
+
+# Sentry Error Tracking (optional)
+VITE_SENTRY_DSN=
+
+# Sentry Source Maps Upload (build-time only, optional)
+SENTRY_AUTH_TOKEN=
+SENTRY_ORG=
+SENTRY_PROJECT=

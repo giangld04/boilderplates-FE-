@@ -1,19 +1,12 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-
-import { Button } from '@/components/ui/button'
+import { createFileRoute } from '@tanstack/react-router'
+import { ErrorPage } from '@/components/common/error-page'
 
 export const Route = createFileRoute('/(errors)/404')({
-  component: NotFoundPage,
+  component: () => (
+    <ErrorPage
+      code={404}
+      title='Page Not Found'
+      description="The page you're looking for doesn't exist or has been moved."
+    />
+  ),
 })
-
-function NotFoundPage() {
-  return (
-    <div className='flex min-h-screen flex-col items-center justify-center gap-4'>
-      <h1 className='text-6xl font-bold text-muted-foreground'>404</h1>
-      <p className='text-lg text-muted-foreground'>Page not found</p>
-      <Button asChild>
-        <Link to='/dashboard'>Go to Dashboard</Link>
-      </Button>
-    </div>
-  )
-}
