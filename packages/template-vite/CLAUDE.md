@@ -15,7 +15,7 @@ This file provides guidance to Claude Code when working in this project.
 ```
 src/
   routes/        # file-based routes — auto-generates routeTree.gen.ts
-  features/      # feature modules: components/, hooks/, types/, schemas/, data/
+  features/      # feature modules: components/, hooks/, services/, types/, schemas/
   components/
     ui/          # shadcn/ui components
     data-table/  # reusable DataTable
@@ -53,7 +53,7 @@ pnpm docker:scan   # Trivy security scan only
 
 ## Adding a Feature
 
-1. Create `src/features/{name}/` with: `types/`, `schemas/`, `components/`, `data/`
+1. Create `src/features/{name}/` with: `types/`, `schemas/`, `services/`, `hooks/`, `components/`
 2. Add route at `src/routes/_authenticated/{name}.tsx`
 3. Add nav item in `src/components/layout/sidebar.tsx`
 4. Use `DataTable` from `src/components/data-table/` for list views

@@ -1,3 +1,10 @@
+/** Generic API response wrapper from backend */
+export interface ApiResponse<T> {
+  data: T
+  message: string
+  success: boolean
+}
+
 /** Generic paginated API response */
 export interface PaginatedResponse<T> {
   data: T[]

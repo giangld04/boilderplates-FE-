@@ -11,8 +11,9 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
-import { SortableContext, arrayMove, horizontalListSortingStrategy } from '@dnd-kit/sortable'
-import { type ColumnDef, type Table as TanstackTable, flexRender } from '@tanstack/react-table'
+import { SortableContext, arrayMove, horizontalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { type Cell, type ColumnDef, type Table as TanstackTable, flexRender } from '@tanstack/react-table'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
@@ -24,6 +25,28 @@ interface DataTableProps<TData> {
   table: TanstackTable<TData>
   columns: ColumnDef<TData>[]
   isLoading?: boolean
+}
+
+/**
+ * Cell that participates in DnD column reordering.
+ * Uses useSortable to get CSS transform during drag so the cell visually
+ * moves with its column header — matching ndatrace-cms DragAlongCell pattern.
+ */
+function DragAlongCell<TData>({ cell }: { cell: Cell<TData, unknown> }) {
+  const { isDragging, setNodeRef, transform } = useSortable({ id: cell.column.id })
+
+  const style: React.CSSProperties = {
+    opacity: isDragging ? 0.6 : 1,
+    transform: CSS.Translate.toString(transform),
+    transition: 'width transform 0.2s ease-in-out',
+    position: 'relative',
+  }
+
+  return (
+    <TableCell ref={setNodeRef} style={style}>
+      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+    </TableCell>
+  )
 }
 
 export function DataTable<TData>({ table, columns, isLoading }: DataTableProps<TData>) {
@@ -46,11 +69,13 @@ export function DataTable<TData>({ table, columns, isLoading }: DataTableProps<T
         columnOrder.indexOf(String(over.id))
       )
       setColumnOrder(newOrder)
+      // Also sync to table instance if parent wired onColumnOrderChange
+      table.setColumnOrder(newOrder)
     }
   }
 
-  // Sort headers/cells by local columnOrder so DnD works without wiring
-  // onColumnOrderChange in the parent useReactTable config.
+  // Sort by local columnOrder so DnD works self-contained (no parent config needed).
+  // After drag ends, re-renders headers/cells in the new order.
   function sortById<T extends { id: string }>(items: T[]): T[] {
     return [...items].sort((a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id))
   }
@@ -94,11 +119,11 @@ export function DataTable<TData>({ table, columns, isLoading }: DataTableProps<T
               ) : table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                    {sortById(row.getVisibleCells()).map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
+                    <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+                      {sortById(row.getVisibleCells()).map((cell) => (
+                        <DragAlongCell key={cell.id} cell={cell} />
+                      ))}
+                    </SortableContext>
                   </TableRow>
                 ))
               ) : (
