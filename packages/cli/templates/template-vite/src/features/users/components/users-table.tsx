@@ -96,8 +96,8 @@ export function UsersTable() {
   })
 
   return (
-    <div className='space-y-4'>
-      <div className='flex items-center justify-between'>
+    <div className='flex flex-col min-h-0 flex-1 gap-4'>
+      <div className='shrink-0 flex items-center justify-between'>
         <DataTableToolbar
           table={table}
           searchColumn='name'
