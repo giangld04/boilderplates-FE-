@@ -64,8 +64,42 @@ pnpm docker:scan   # Trivy security scan only
 Copy `.env.example` to `.env`. Key vars:
 - `VITE_SENTRY_DSN` — Sentry DSN (optional)
 
+## Library-Specific Rules
+
+### Tailwind CSS v4
+- No `tailwind.config.js` — config lives in CSS via `@theme` block
+- Use `@utility` to define custom utilities, NOT `@apply` for component styles
+- CSS variables for design tokens: `var(--color-primary)`, `var(--spacing-4)`
+- Import: `import '@/styles/globals.css'` (single entry, no per-component imports)
+- Dark mode: use `dark:` variant, toggled via `next-themes` `ThemeProvider`
+
+### TanStack Router
+- File-based routing only — create files in `src/routes/`, never manually edit `routeTree.gen.ts`
+- Every route file must export via `createFileRoute('...')` — path must match filename exactly
+- Authenticated routes go under `src/routes/_authenticated/` (wrapped by auth layout)
+- Navigation: `useNavigate()` hook or `<Link to="...">`, never `window.location`
+- Params: `const { id } = Route.useParams()`, search: `Route.useSearch()`
+- Lazy load heavy routes: `export const Route = createLazyFileRoute(...)`
+
+### TanStack Query
+- Prefer `useSuspenseQuery` over `useQuery` — wrap route component in `<Suspense>`
+- Query keys: array format `['resource', id]` or `['resource', 'list', filters]`
+- Mutations: `useMutation` + `onSuccess: () => queryClient.invalidateQueries(...)`
+- Global config in `src/lib/query-client.ts` — do not create new QueryClient instances
+- All API calls go through `src/lib/api-client.ts` (axios instance with auth headers)
+
+### shadcn/ui
+- Components live in `src/components/ui/` — do not edit them directly
+- Add new components: `pnpm dlx shadcn@latest add <component>`
+- Compose with Radix primitives when shadcn doesn't have what you need
+- Use `cn()` from `src/lib/utils.ts` for conditional class merging (not `clsx` directly)
+
+### react-hook-form + zod
+- Always define schema with `z.object({...})` in `src/features/{name}/schemas/`
+- Use `useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema) })`
+- Never use uncontrolled inputs — always register with `{...register('field')}`
+
 ## Claude AI Workflow
 
-- Use `.claude/skills/` prompts for structured Claude Code workflows
 - Always run `pnpm lint && pnpm type-check` after code changes
 - Follow conventional commits: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`
