@@ -99,7 +99,37 @@ Copy `.env.example` to `.env`. Key vars:
 - Use `useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema) })`
 - Never use uncontrolled inputs — always register with `{...register('field')}`
 
+### Zustand
+- One store per feature domain in `src/stores/`
+- Never store server data in Zustand — server state belongs in TanStack Query
+- Use immer middleware for nested state updates
+
+### i18n
+- All user-facing strings must use `useTranslation()` — no hardcoded UI text
+- Key format: `"feature.action.noun"` (e.g. `"user.form.submit"`)
+- Translation files: `src/locales/{en,vi}/translation.json`
+
+## API Patterns
+
+- Auth: Bearer token in `Authorization` header — handled automatically by `src/lib/api-client.ts` interceptor
+- Success response shape: `{ data: T, message: string, success: boolean }`
+- Error response shape: `{ message: string, errors: Record<string, string[]> }`
+- Base URL: `import.meta.env.VITE_API_URL`
+- Never create axios instances directly — always import from `src/lib/api-client.ts`
+
+## Anti-Patterns — Never Do These
+
+- **No `useEffect` for data fetching** — use TanStack Query (`useSuspenseQuery` / `useQuery`)
+- **No `React.FC`** — use `function Component(): JSX.Element`
+- **No `any`** — use `unknown` + type guard or proper types
+- **No business logic in route files** — put in `src/features/`
+- **No direct edits to `src/components/ui/`** — add components via `pnpm dlx shadcn@latest add`
+- **No manual edits to `routeTree.gen.ts`** — auto-generated, regenerates on `pnpm dev`
+- **No new `QueryClient` instances** — use the one from `src/lib/query-client.ts`
+- **No hardcoded UI strings** — use i18n keys
+
 ## Claude AI Workflow
 
+- Slash commands available: `/feature`, `/debug`, `/review`, `/plan` (see `.claude/commands/`)
 - Always run `pnpm lint && pnpm type-check` after code changes
 - Follow conventional commits: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`
