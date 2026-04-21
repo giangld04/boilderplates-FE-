@@ -17,13 +17,13 @@ import { PlusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar'
-import { mockUsers } from '../data/users-mock-data'
+import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../hooks/use-users'
 import { getUsersTableColumns } from './users-table-columns'
 import { UserFormDialog } from './user-form-dialog'
 import { UserDeleteConfirmationDialog } from './user-delete-confirmation-dialog'
 import type { User } from '../types/user'
+import type { CreateUserPayload, UpdateUserPayload } from '../services/users-api'
 
-/** Filter options for role and status faceted filters */
 const roleFilterOptions = [
   { label: 'Admin', value: 'admin' },
   { label: 'Manager', value: 'manager' },
@@ -42,57 +42,40 @@ const toolbarFilters = [
 ]
 
 export function UsersTable() {
-  const [data, setData] = useState<User[]>(mockUsers)
+  const { data: response, isLoading } = useUsers()
+  const createUser = useCreateUser()
+  const updateUser = useUpdateUser()
+  const deleteUser = useDeleteUser()
+
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
   const [rowSelection, setRowSelection] = useState({})
-
-  // Dialog state
   const [formDialogOpen, setFormDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
-  const handleEdit = (user: User) => {
-    setSelectedUser(user)
-    setFormDialogOpen(true)
-  }
-
-  const handleDelete = (user: User) => {
-    setSelectedUser(user)
-    setDeleteDialogOpen(true)
-  }
-
-  const handleAddNew = () => {
-    setSelectedUser(null)
-    setFormDialogOpen(true)
-  }
+  const handleEdit = (user: User) => { setSelectedUser(user); setFormDialogOpen(true) }
+  const handleDelete = (user: User) => { setSelectedUser(user); setDeleteDialogOpen(true) }
+  const handleAddNew = () => { setSelectedUser(null); setFormDialogOpen(true) }
 
   const handleFormSubmit = (values: Omit<User, 'id' | 'createdAt'>) => {
     if (selectedUser) {
-      // Edit existing user
-      setData((prev) => prev.map((u) => (u.id === selectedUser.id ? { ...u, ...values } : u)))
+      updateUser.mutate({ id: selectedUser.id, data: values as UpdateUserPayload })
     } else {
-      // Add new user
-      const newUser: User = {
-        ...values,
-        id: String(Date.now()),
-        createdAt: new Date().toISOString().split('T')[0],
-      }
-      setData((prev) => [newUser, ...prev])
+      createUser.mutate(values as CreateUserPayload)
     }
     setFormDialogOpen(false)
   }
 
   const handleConfirmDelete = () => {
-    if (selectedUser) {
-      setData((prev) => prev.filter((u) => u.id !== selectedUser.id))
-    }
+    if (selectedUser) deleteUser.mutate(selectedUser.id)
     setDeleteDialogOpen(false)
     setSelectedUser(null)
   }
 
+  const data = response?.data ?? []
   const columns = getUsersTableColumns({ onEdit: handleEdit, onDelete: handleDelete })
 
   const table = useReactTable({
@@ -121,7 +104,7 @@ export function UsersTable() {
           searchPlaceholder='Search users...'
           filters={toolbarFilters}
         />
-        <Button size='sm' className='ml-4' onClick={handleAddNew}>
+        <Button size='sm' className='ml-4' onClick={handleAddNew} disabled={isLoading}>
           <PlusCircle className='mr-2 h-4 w-4' />
           Add User
         </Button>

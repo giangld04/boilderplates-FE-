@@ -7,13 +7,19 @@ import { replaceInFiles } from './utils/template.js'
 // Resolve __dirname in ESM context
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-/** Special file renames: underscore-prefixed files restored to their real names on scaffold */
+/**
+ * Special renames on scaffold: underscore-prefixed names → real names.
+ * Dot-directories (.claude/, .husky/) are shipped as _claude/ and _husky/
+ * because npm does not extract dot-directories from tarballs.
+ */
 const FILE_RENAMES: [string, string][] = [
   ['_gitignore', '.gitignore'],
   ['_env.example', '.env.example'],
   ['_prettierrc', '.prettierrc'],
   ['_prettierignore', '.prettierignore'],
   ['_package.json', 'package.json'],
+  ['_claude', '.claude'],
+  ['_husky', '.husky'],
 ]
 
 /**

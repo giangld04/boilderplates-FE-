@@ -16,7 +16,8 @@
     "gen:api": "swagger-typescript-api -p ./docs/swagger/api.json -o ./src/features/auth/services/gen --no-client --modular",
     "gen:api:watch": "swagger-typescript-api -p ./docs/swagger/api.json -o ./src/features/auth/services/gen --no-client --modular --watch",
     "docker:build": "bash scripts/build-and-scan.sh",
-    "docker:scan": "bash scripts/trivy-scan.sh"
+    "docker:scan": "bash scripts/trivy-scan.sh",
+    "prepare": "is-ci || husky"
   },
   "dependencies": {
     "@sentry/react": "^9.0.0",
@@ -87,7 +88,10 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
+    "is-ci": "^3.0.1",
     "lint-staged": "^15.2.11",
     "knip": "^5.64.2",
     "swagger-typescript-api": "^13.2.7",
