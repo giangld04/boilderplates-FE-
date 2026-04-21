@@ -26,6 +26,7 @@ for (const name of templates) {
   console.log(`Copying ${name}...`)
   await cp(src, dest, {
     recursive: true,
+    dot: true, // include dotfiles (.husky/, .claude/, etc.)
     filter: (src) => {
       // Skip node_modules, .git, dist, tsconfig.tsbuildinfo
       const rel = src.replace(path.join(repoRoot, 'packages', name), '')
