@@ -1,6 +1,6 @@
 {
   "name": "doo-boilerplate",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "CLI to scaffold Pila portal frontend projects",
   "type": "module",
   "bin": {
